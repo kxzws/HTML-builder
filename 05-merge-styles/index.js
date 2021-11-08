@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 const { constants } = fs;
 
-
 const fileName = "bundle.css";
 const destPath = path.join(__dirname, "project-dist", fileName);
 const srcPath = path.join(__dirname, "styles");

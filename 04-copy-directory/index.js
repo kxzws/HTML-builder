@@ -18,10 +18,10 @@ fs.readdir(newFolderPath, { withFileTypes: true }, (error, files) => {
         
         fs.unlink(newFilePath, error => {
           if (error) stderr.write(`Error fs.unlink() code: ${error}`);
-        })
+        });
     });
   }
-})
+});
 
 fs.readdir(folderPath, { withFileTypes: true }, (error, files) => {
   if (error) {
@@ -33,7 +33,7 @@ fs.readdir(folderPath, { withFileTypes: true }, (error, files) => {
         
         fs.copyFile(filePath, newFilePath, error => {
           if (error) stderr.write(`Error fs.copyFile() code: ${error}`);
-        })
+        });
     });
   }
 });
