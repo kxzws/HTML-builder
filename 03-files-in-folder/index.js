@@ -20,5 +20,4 @@ fs.readdir(folderPath, { withFileTypes: true }, (error, files) => {
       }
     });
   }
-  
 });
