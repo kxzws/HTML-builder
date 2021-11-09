@@ -16,12 +16,12 @@ fs.mkdir(folderPath, { recursive: true }, (error) => {
   if (error) stderr.write(`Error fs.mkdir() code: ${error}`);
 });
 
+// create index.html
+// fill tagArr by tags from components
 let tagArr = [];
 const template = fs.createReadStream(templatePath, 'utf-8');
 const index = fs.createWriteStream(indexPath);
 
-// create index.html
-// fill tagArr by tags from components
 fs.readdir(path.join(__dirname, "components"), { withFileTypes: true }, (error, files) => {
   if (error) {
     stderr.write(`Error fs.readdir() code: ${error}`);
@@ -34,29 +34,33 @@ fs.readdir(path.join(__dirname, "components"), { withFileTypes: true }, (error, 
   }
 });
 
-fs.access(indexPath, constants.F_OK, (error) => {
-  if (!error)
-    fs.unlink(indexPath, (error) => {
-      if (error) stderr.write(`Error fs.unlink() code: ${error}`);
-    });
-});
+// fs.access(indexPath, constants.F_OK, (error) => {
+//   if (!error)
+//     fs.unlink(indexPath, (error) => {
+//       if (error) stderr.write(`Error fs.unlink() code: ${error}`);
+//     });
+// });
 
 template.on('data', chunk => {
   let data = chunk.toString();
 
-  tagArr.forEach(tag => {
+  tagArr.forEach((tag, ind) => {
     if (data.indexOf(tag) > -1) {
       let correctTag = tag.replace('{{', '').replace('}}', '');
 
-      fs.readFile( path.join(__dirname, "components", correctTag + ".html"), 'utf-8', (error, html) => {
-          if (error) stderr.write(`Error fs.readFile() code: ${error}`);
-          data.replace(tag, html);
+      let readComp = fs.createReadStream(path.join(__dirname, "components", correctTag + ".html"), 'utf-8');
+      readComp.on('data', html => {
+        data = data.replace(tag, html);
+        if (ind === tagArr.length - 1) {// write file on the last tag
           index.write(data);
+        }
       });
     }
-  })
+
+  });
+
 });
-template.on('error', error => stderr.write(`Error fs.readdir() code: ${error}`));
+template.on('error', error => stderr.write(`Error template.on() code: ${error}`));
 
 // copy assets
 fs.mkdir(newAssetsPath, { recursive: true}, error => {
